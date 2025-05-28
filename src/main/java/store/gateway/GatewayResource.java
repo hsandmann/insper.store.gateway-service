@@ -18,6 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class GatewayResource {
 
+    @GetMapping("/")
+    public ResponseEntity<String> hallo() {
+        return new ResponseEntity<String>("api", HttpStatus.OK);
+    }
+
+
     @GetMapping({"/info", "/health-check"})
     public ResponseEntity<Map<String, String>> version() {
 
