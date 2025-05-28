@@ -24,6 +24,16 @@ spring:
           predicates:
             - Path=/auth/**
 
+        - id: order
+          uri: http://order:8080
+          predicates:
+            - Path=/order/**
+
+        - id: product
+          uri: http://product:8080
+          predicates:
+            - Path=/product/**
+
         # - id: exchange
         #   uri: http://exchange:80
         #   predicates:
@@ -32,3 +42,13 @@ spring:
 logging:
   level:
     store: ${LOGGING_LEVEL_STORE:debug}
+
+management:
+  endpoint:
+    gateway:
+      enabled: true
+  endpoints:
+    web:
+      base-path: /gateway/actuator
+      exposure:
+        include: [ 'prometheus', 'gateway' ]

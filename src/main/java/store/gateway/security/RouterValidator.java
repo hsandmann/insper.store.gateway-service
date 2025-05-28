@@ -10,8 +10,17 @@ import org.springframework.stereotype.Component;
 public class RouterValidator {
 
     private List<String> openApiEndpoints = List.of(
+
+        // authorization and authentication
         "POST /auth/register",
-        "POST /auth/login"
+        "POST /auth/login",
+
+        // observability
+        "GET /auth/actuator/prometheus",
+        "GET /account/actuator/prometheus",
+        "GET /product/actuator/prometheus",
+        "GET /order/actuator/prometheus"
+        
     );
 
     public Predicate<ServerHttpRequest> isSecured =

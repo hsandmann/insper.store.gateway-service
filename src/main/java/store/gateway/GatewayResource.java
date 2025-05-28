@@ -1,7 +1,13 @@
 package store.gateway;
 
 import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
@@ -12,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class GatewayResource {
 
-    @GetMapping("/info")
+    @GetMapping({"/info", "/health-check"})
     public ResponseEntity<Map<String, String>> version() {
 
         String hostname = "hostname can not be resolved";
@@ -22,9 +28,23 @@ public class GatewayResource {
             hostname = addr.getHostName();
         } catch (UnknownHostException ex) { }
 
+        List<String> ips = new ArrayList<String>();
+        try {
+            Enumeration<NetworkInterface> e = NetworkInterface.getNetworkInterfaces();
+            while(e.hasMoreElements()) {
+                NetworkInterface n = (NetworkInterface) e.nextElement();
+                Enumeration<InetAddress> ee = n.getInetAddresses();
+                while (ee.hasMoreElements()) {
+                    InetAddress i = (InetAddress) ee.nextElement();
+                    ips.add(i.getCanonicalHostName() + ": " + i.getHostAddress());
+                }
+            }
+        } catch (SocketException e) { }
+
         return new ResponseEntity<Map<String, String>>(
             Map.ofEntries(
                 Map.entry("hostname", hostname),
+                Map.entry("ip", Arrays.toString(ips.toArray())),
                 Map.entry("os.arch", System.getProperty("os.arch")),
                 Map.entry("os.name", System.getProperty("os.name")),
                 Map.entry("os.version", System.getProperty("os.version")),
